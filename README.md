@@ -72,7 +72,7 @@ Projeto para instalação de servidor apache, php, letsencrypt, GLPI e MkDocs ut
 
 ## Clonando o repositório e executando o Ansible Passo a Passo
 
-- Clone esse repositório parar seu PC.
+- Clone esse repositório para seu PC.
 
 ### Criar uma VM linux
 
@@ -172,7 +172,7 @@ Projeto para instalação de servidor apache, php, letsencrypt, GLPI e MkDocs ut
 
 ### Executando todas as roles
 
-- Informações importantes antes de executar o commando para cada etapa:
+- Informações importantes antes de executar o comando:
   - Provisioning
   - Install Apache, Let's Encrypt e PHP
     - Considere alterar seus dados na role install-apache > files
@@ -234,8 +234,12 @@ Projeto para instalação de servidor apache, php, letsencrypt, GLPI e MkDocs ut
     $ cd rhel-apache-glpi-mkdocs-php
     $ ansible-playbook -i hosts main.yml
     ```
+  
+  - Após a execução acima se não ocorreu nenhum erro todas as roles foram instaladas com sucesso!
 
 ### Executando as roles por Etapas
+
+- Se deseja executar role por role utilize esse passo a passo.
 
 #### Provisioning
 
@@ -368,61 +372,7 @@ Projeto para instalação de servidor apache, php, letsencrypt, GLPI e MkDocs ut
   - Usuário e senha do banco glpi caso não alterou na role install-mysql:
     - user: infra
     - passwd: P@sswd
-
-- Segue abaixo algumas dicas de configuração do GLPI (Vincular ao AD, inventory automatico)
-- Na pasta rhel-apache-glpi-mkdocs-php\install_apps\install-site-glpiti\files
-  - Contém o agente linux e windows e um readme de como usar cada um deles.
-  - Script inventory para configurar no crontab, deve se alterar o arquivo inventory-esx.sh com seus dispositivos senhas e strings snmp. (Esse script já está configurado no crontab, porém com todas as linhas comentadas, basta adicionar os dados e salvar ele roda uma vez por semana)
-    - Caso deseje basta executar manualmente o inventory-esx.sh e depois que finalizar o injector-esx.sh.
-
-- Filtros de conexão para o AD
-    * Filtro da conexão: (&(objectClass=user)(objectCategory=person))
-    * BaseDN: dc=domain, dc=com, dc=br
-    * RootDN (para ligações não anônimas): domain\user
-    * Campo de Login: samaccountname
-
-- Filtro de conexão grupos para o AD
-    * Tipos de pesquisa: Em grupos
-    * Filtrar para pesquisar em grupos: (objectClass=group)
-
-- Editar php.ini
-    * Busque pela opção session.cookie_httponly e adicione On ao lado do sinal de =
-
-- Licença Marketplace 
-    * Criar conta GLPI Network e vincular chave na pagina de plugin
-
-- Glpi Inventory Nativo
-    * https://glpi-agent.readthedocs.io/en/latest/index.html
-    * Baixar GLPI Agent
-    * Instalar nas máquinas
-        * Em Remote Targets cole a URL da pagina invetory de seu ambiente (deixar no final apenas inventory.php)
-        * http://glpi.yourdomain.com.br/front/inventory.php
-        * acessar na maquina o agente: localhost:62354 (pode forçar o inventory)
-
-- Glpi Inventory Plugin
-    * Baixar no site da GLPI Project 
-        * Url:  https://github.com/glpi-project/glpi-inventory-plugin/releases/download/1.3.4/glpi-glpiinventory-1.3.4.tar.bz2
-        * Eu não adiciono pelo marketplace do GLPI, realizo download direto na pasta do GLPI:
-            $ cd /var/www/html/glpi/plugins
-            $ wget https://github.com/glpi-project/glpi-inventory-plugin/releases/download/1.3.4/glpi-glpiinventory-1.3.4.tar.bz2
-            $ tar -xvf glpi-glpiinventory-1.3.4.tar.bz2
-        * Acesse seu GLPI na aba Plugins e click em instalar no plugin adicionado
-        * Habilite o plugin
-        * Em administração vai aparecer a aba Inventory GLPI
-        * para inventariar use os mesmos passos realizados no Inventory Nativo]
-
-        * Na aba Inventário GLPI > click em Geral > Configuração Geral > Módulo dos agentes > habilite os módulos que deseja utilizar
-
-- Glpi Inventory vCenter
-    * https://glpi-agent.readthedocs.io/en/latest/man/glpi-esx.html
-
-- Para o script de inventory automatico você deve alterar para seus dispositivos internos ou desativar no crontab.
-  - Veja na task de instalação do GLPI e procure pelos scripts injector.sh e inventory.sh
-
-- Racks
-    * Para aparecer as imagens dos ativos, adicione mais informações no modelo de seus itens na lista suspensa
-    * Se fizer bem estruturado conseguimos um nível de gestão de inventário muito bom, veja um exemplo: 
-    ![Exemplo de Rack GLPI](.github/assets/images/readme/glpi/rack_glpi.jpg)
+  - Passo a passo da instalação após concluir a instalação de todas as roles está no final desse README.
 
 ## Caso tenha curiosidade de saber o processo de criação das pastas e roles do Ansible passo a passo
 
@@ -646,54 +596,11 @@ Projeto para instalação de servidor apache, php, letsencrypt, GLPI e MkDocs ut
 
     ```
 
-- Filtros de conexão
-    * Filtro da conexão: (&(objectClass=user)(objectCategory=person))
-    * BaseDN: dc=domain, dc=com, dc=br
-    * RootDN (para ligações não anônimas): domain\user
-    * Campo de Login: samaccountname
-
-- Filtro de conexão grupos
-    * Tipos de pesquisa: Em grupos
-    * Filtrar para pesquisar em grupos: (objectClass=group)
-
-- Editar php.ini
-    * Busque pela opção session.cookie_httponly e adicione On ao lado do sinal de =
-
-- Licença Marketplace 
-    * Criar conta GLPI Network e vincular chave na pagina de plugin
-
-- Glpi Inventory Nativo
-    * https://glpi-agent.readthedocs.io/en/latest/index.html
-    * Baixar GLPI Agent
-    * Instalar nas máquinas
-        * Em Remote Targets cole a URL da pagina invetory de seu ambiente (deixar no final apenas inventory.php)
-        * http://glpi.yourdomain.com.br/front/inventory.php
-        * acessar na maquina o agente: localhost:62354 (pode forçar o inventory)
-
-- Glpi Inventory Plugin
-    * Baixar no site da GLPI Project 
-        * Url:  https://github.com/glpi-project/glpi-inventory-plugin/releases/download/1.3.4/glpi-glpiinventory-1.3.4.tar.bz2
-        * Eu não adiciono pelo marketplace do GLPI, realizo download direto na pasta do GLPI:
-            $ cd /var/www/html/glpi/plugins
-            $ wget https://github.com/glpi-project/glpi-inventory-plugin/releases/download/1.3.4/glpi-glpiinventory-1.3.4.tar.bz2
-            $ tar -xvf glpi-glpiinventory-1.3.4.tar.bz2
-        * Acesse seu GLPI na aba Plugins e click em instalar no plugin adicionado
-        * Habilite o plugin
-        * Em administração vai aparecer a aba Inventory GLPI
-        * para inventariar use os mesmos passos realizados no Inventory Nativo]
-
-        * Na aba Inventário GLPI > click em Geral > Configuração Geral > Módulo dos agentes > habilite os módulos que deseja utilizar
-
-- Glpi Inventory vCenter
-    * https://glpi-agent.readthedocs.io/en/latest/man/glpi-esx.html
-
-- Para o script de inventory automatico você deve alterar para seus dispositivos internos ou desativar no crontab.
-  - Veja na task de instalação do GLPI e procure pelos scripts injector.sh e inventory.sh
-
-- Racks
-    * Para aparecer as imagens dos ativos, adicione mais informações no modelo de seus itens na lista suspensa
-    * Se fizer bem estruturado conseguimos um nível de gestão de inventário muito bom, veja um exemplo: 
-    ![Exemplo de Rack GLPI](.github/assets/images/readme/glpi/rack_glpi.jpg)
+- Após a instalação basta abrir a pagina e seguir a configuração (glpi.yourdomain.com.br):
+  - Usuário e senha do banco glpi caso não alterou na role install-mysql:
+    - user: infra
+    - passwd: P@sswd
+  - Passo a passo da instalação após concluir a instalação de todas as roles está no final desse README.
 
 ### SNMP
     * Local dos arquivos MIB: /usr/share/snmp/mibs
@@ -736,6 +643,56 @@ Projeto para instalação de servidor apache, php, letsencrypt, GLPI e MkDocs ut
     * Para aparecer as imagens dos ativos, adicione mais informações no modelo de seus itens na lista suspensa
     * Se fizer bem estruturado conseguimos um nível de gestão de inventário muito bom, veja um exemplo: 
     ![Exemplo de Rack GLPI](.github/assets/images/readme/glpi/rack_glpi.jpg)
+
+- Segue abaixo algumas dicas de configuração do GLPI (Vincular ao AD, inventory automatico)
+- Na pasta rhel-apache-glpi-mkdocs-php\install_apps\install-site-glpiti\files
+  - Contém o agente linux e windows e um readme de como usar cada um deles.
+  - Script inventory para configurar no crontab, deve se alterar o arquivo inventory-esx.sh com seus dispositivos senhas e strings snmp. (Esse script já está configurado no crontab, porém com todas as linhas comentadas, basta adicionar os dados e salvar ele roda uma vez por semana)
+    - Caso deseje basta executar manualmente o inventory-esx.sh e depois que finalizar o injector-esx.sh.
+
+- Filtros de conexão para o AD
+    * Filtro da conexão: (&(objectClass=user)(objectCategory=person))
+    * BaseDN: dc=domain, dc=com, dc=br
+    * RootDN (para ligações não anônimas): domain\user
+    * Campo de Login: samaccountname
+
+- Filtro de conexão grupos para o AD
+    * Tipos de pesquisa: Em grupos
+    * Filtrar para pesquisar em grupos: (objectClass=group)
+
+- Editar php.ini
+    * Busque pela opção session.cookie_httponly e adicione On ao lado do sinal de =
+
+- Licença Marketplace 
+    * Criar conta GLPI Network e vincular chave na pagina de plugin
+
+- Glpi Inventory Nativo
+    * https://glpi-agent.readthedocs.io/en/latest/index.html
+    * Baixar GLPI Agent
+    * Instalar nas máquinas
+        * Em Remote Targets cole a URL da pagina invetory de seu ambiente (deixar no final apenas inventory.php)
+        * http://glpi.yourdomain.com.br/front/inventory.php
+        * acessar na maquina o agente: localhost:62354 (pode forçar o inventory)
+
+- Glpi Inventory Plugin
+    * Baixar no site da GLPI Project 
+        * Url:  https://github.com/glpi-project/glpi-inventory-plugin/releases/download/1.3.4/glpi-glpiinventory-1.3.4.tar.bz2
+        * Eu não adiciono pelo marketplace do GLPI, realizo download direto na pasta do GLPI:
+            $ cd /var/www/html/glpi/plugins
+            $ wget https://github.com/glpi-project/glpi-inventory-plugin/releases/download/1.3.4/glpi-glpiinventory-1.3.4.tar.bz2
+            $ tar -xvf glpi-glpiinventory-1.3.4.tar.bz2
+        * Acesse seu GLPI na aba Plugins e click em instalar no plugin adicionado
+        * Habilite o plugin
+        * Em administração vai aparecer a aba Inventory GLPI
+        * para inventariar use os mesmos passos realizados no Inventory Nativo]
+
+        * Na aba Inventário GLPI > click em Geral > Configuração Geral > Módulo dos agentes > habilite os módulos que deseja utilizar
+
+- Glpi Inventory vCenter
+    * https://glpi-agent.readthedocs.io/en/latest/man/glpi-esx.html
+
+- Para o script de inventory automatico você deve alterar para seus dispositivos internos ou desativar no crontab.
+  - Veja na task de instalação do GLPI e procure pelos scripts injector.sh e inventory.sh
 
 ## 👨‍💻 Expert
 
