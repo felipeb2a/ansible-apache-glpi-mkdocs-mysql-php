@@ -1,0 +1,11 @@
+---
+# vars file for install-glpiti
+name_app: glpi
+path_site: /var/www/html/glpi
+file_site_name_conf: glpi.conf
+server_name_apache: "glpi.yourdomain.com.br"
+path_apache_conf: /etc/httpd/conf.d
+
+# vars download glpi
+url_download_glpi: "https://github.com/glpi-project/glpi/releases/download/10.0.10/glpi-10.0.10.tgz"
+name_download_glpi_file: "glpi.tgz"

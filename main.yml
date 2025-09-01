@@ -1,0 +1,97 @@
+- hosts: all
+  become: yes
+  user: administrator
+  gather_facts: yes
+  pre_tasks:
+  - name: Disable SELinux
+    selinux:
+      state: disabled
+  
+  - name: Atualizando o repo
+    raw: dnf -y update
+
+  - name: Instalando o epel-release
+    raw: dnf -y install epel-release
+
+  - name: Intalando o dnf-utils
+    raw: dnf -y install dnf-utils
+
+#  - name: Instalando o python
+#    raw: dnf -y install python39
+
+ # - name: Removendo o link simbolico python antigo
+ #   raw: rm /usr/bin/python"
+
+  - name: Adicionando o link simbolico do python mais recente
+    raw: ln -s python3 /usr/bin/python
+
+  - name: Instalando o python-firewall
+    raw: dnf -y install python-firewall
+
+  - name: Instalando o libselinux-python3
+    raw: dnf -y install libselinux-python3
+
+  - name: Instalando o libsemanage-python3
+    raw: dnf -y install libsemanage-python3
+
+  - name: Instalando o  python-dnf
+    raw: dnf -y install python-dnf
+
+  - name: Instalando o git
+    raw: dnf -y install git
+
+  - name: Instalando o tar
+    raw: dnf -y install tar
+
+  - name: Instalando o wget
+    raw: dnf -y install wget
+
+  - name: Instalando o bzip2
+    raw: dnf -y install bzip2
+
+  - name: Instalando o unzip
+    raw: dnf -y install unzip
+
+#  - name: "Desabilitando o SELinux"
+#    selinux:
+#      state: disabled
+
+#  - name: "Desabilitando o SELinux Config"
+#    shell: sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
+
+  roles:
+    - { role: provisioning/roles/configurando-instancias, tags: ["configurando_instancias"] }
+    - { role: install_apache_php/roles/install-apache, tags: ['install_apache_role'] }
+    - { role: install_apache_php/roles/install-php, tags: ['install_php_role'] }
+    - { role: install_apache_php/roles/install-letsencrypt, tags: ['install_letsencrypt_role'] }
+    - { role: install_mkdocs/roles/install-mkdocs, tags: ["install_mkdocs_role"] }
+    - { role: install_mysql/roles/install-mysql, tags: ['install_mysql_role'] }
+    - { role: install_apps/roles/install-site-intranet, tags: ['install_site_intranet_role'] }
+    - { role: install_apps/roles/install-site-glpiti, tags: ['install_site_glpiti_role'] }
+
+  post_tasks:
+
+  - name: Enable SELinux
+    selinux:
+      policy: targeted
+      state: enforcing
+
+#  - name: Restart service httpd on centos, in all cases, also issue daemon-reload to pick up config changes
+#    systemd:
+#      state: restarted
+#      daemon_reload: yes
+#      name: httpd
+
+  - name: Reiniciar o servidor
+    ansible.builtin.reboot:
+      msg: "Reiniciando após instalação das apps"
+      reboot_timeout: 600
+
+  - name: Aguardar o servidor voltar
+    ansible.builtin.wait_for_connection:
+      timeout: 300
+      delay: 10
+
+  - name: Exibir mensagem de sucesso
+    ansible.builtin.debug:
+      msg: "Apps instalado com sucesso e servidor reiniciado!"

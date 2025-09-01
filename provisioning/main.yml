@@ -1,0 +1,56 @@
+- hosts: all
+  become: yes
+  user: administrator
+  gather_facts: no
+  pre_tasks:
+  - name: Atualizando o repo
+    raw: dnf -y update
+
+  - name: Instalando o epel-release
+    raw: dnf -y install epel-release
+
+  - name: Intalando o dnf-utils
+    raw: dnf -y install dnf-utils
+
+#  - name: Instalando o python
+#    raw: dnf -y install python39
+
+ # - name: Removendo o link simbolico python antigo
+ #   raw: rm /usr/bin/python"
+
+  - name: Adicionando o link simbolico do python mais recente
+    raw: ln -s python3 /usr/bin/python
+
+  - name: Instalando o python-firewall
+    raw: dnf -y install python-firewall
+
+  - name: Instalando o libselinux-python3
+    raw: dnf -y install libselinux-python3
+
+  - name: Instalando o libsemanage-python3
+    raw: dnf -y install libsemanage-python3
+
+  - name: Instalando o  python-dnf
+    raw: dnf -y install python-dnf
+
+  - name: Instalando o git
+    raw: dnf -y install git
+
+  - name: Instalando o tar
+    raw: dnf -y install tar
+
+  - name: Instalando o wget
+    raw: dnf -y install wget
+
+  - name: Instalando o bzip2
+    raw: dnf -y install bzip2
+
+#  - name: "Desabilitando o SELinux"
+#    selinux:
+#      state: disabled
+
+#  - name: "Desabilitando o SELinux Config"
+#    shell: sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
+
+  roles:
+  - { role: configurando-instancias, tags: ["configurando_instancias"] }

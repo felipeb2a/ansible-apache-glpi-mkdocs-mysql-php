@@ -1,0 +1,24 @@
+- hosts: all
+  become: yes
+  user: administrator
+  gather_facts: yes
+  pre_tasks:
+  - name: Disable SELinux
+    selinux:
+      state: disabled
+  
+  roles:
+  - { role: install-site-intranet, tags: ["install_site_intranet_role"] }
+  - { role: install-site-glpiti, tags: ["install_site_glpiti_role"] }
+
+  post_tasks:
+  - name: Enable SELinux
+    selinux:
+      policy: targeted
+      state: enforcing
+
+  - name: Restart service httpd on centos, in all cases, also issue daemon-reload to pick up config changes
+    systemd:
+      state: restarted
+      daemon_reload: yes
+      name: httpd

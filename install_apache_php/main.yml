@@ -1,0 +1,20 @@
+- hosts: all
+  become: yes
+  user: administrator
+  gather_facts: no
+  pre_tasks:
+  - name: Atualizando o repo
+    raw: dnf -y update
+    
+  roles:
+  - { role: install-apache, tags: ['install_apache_role'] }
+  - { role: install-php, tags: ['install_php_role'] }
+  - { role: install-letsencrypt, tags: ['install_letsencrypt_role'] }
+
+  post_tasks:
+
+  - name: Restart service httpd on centos, in all cases, also issue daemon-reload to pick up config changes
+    systemd:
+      state: restarted
+      daemon_reload: yes
+      name: httpd

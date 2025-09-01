@@ -1,0 +1,10 @@
+- hosts: all
+  become: yes
+  user: administrator
+  gather_facts: no
+  pre_tasks:
+  - name: Atualizando o repo
+    raw: dnf -y update
+    
+  roles:
+  - { role: install-mysql, tags: ['install_mysql_role'] }
